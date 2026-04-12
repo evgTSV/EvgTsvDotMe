@@ -1,0 +1,8 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+/EvgTsvDotMe.PagesProvider/.paket
+/EvgTsvDotMe.PagesProvider/packages
+/EvgTsvDotMe.PagesProvider/paket-files

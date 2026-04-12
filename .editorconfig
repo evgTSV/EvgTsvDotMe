@@ -1,0 +1,29 @@
+root = true
+
+[*]
+charset = utf-8
+indent_size = 4
+indent_style = space
+end_of_line = lf
+insert_final_newline = true
+
+[*.fsproj]
+indent_size = 2
+
+[*.fs]
+max_line_length = 100
+fsharp_newline_between_type_definition_and_members = true
+fsharp_type_definition_on_same_line = false
+fsharp_blank_lines_around_nested_multiline_expressions = true
+fsharp_max_function_binding_width = 40
+fsharp_function_binding_style = multiline
+fsharp_max_if_then_else_short_width = 60
+fsharp_indent_match_when = true
+fsharp_max_array_or_list_width = 80
+fsharp_max_array_or_list_number_of_items = 5
+fsharp_max_record_width = 40
+fsharp_max_record_number_of_items = 3
+fsharp_array_or_list_multiline_style = multiline
+fsharp_multiline_bracket_style = stroustrup
+fsharp_keep_max_number_of_blank_lines = 1
+fsharp_space_after_comma = true

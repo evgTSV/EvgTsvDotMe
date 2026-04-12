@@ -1,0 +1,35 @@
+type file
+id EvgTsvDotMe.PagesProvider
+version 1.0
+authors
+    Evgenii Tsvetkov
+owners
+    Evgenii Tsvetkov
+projectUrl
+    https://github.com/evgTsv/EvgTsvDotMe
+iconUrl
+    https://github.com/evgTsv/EvgTsvDotMe/master/docs/files/img/logo.png
+licenseUrl
+    https://github.com/evgTsv/EvgTsvDotMe/blob/master/LICENSE.txt
+requireLicenseAcceptance
+    false
+summary
+    This library is for the .NET platform implementing EvgTsvDotMe.PagesProvider.
+description
+    This library is for the .NET platform implementing EvgTsvDotMe.PagesProvider.
+tags
+    F# fsharp typeproviders EvgTsvDotMe.PagesProvider
+files
+    bin/Release/netstandard2.0/EvgTsvDotMe.PagesProvider.Runtime.* ==> lib/netstandard2.0
+    bin/Release/netstandard2.0/EvgTsvDotMe.PagesProvider.DesignTime.dll ==> lib/netstandard2.0
+references
+    EvgTsvDotMe.PagesProvider.Runtime.dll
+dependencies
+  FSharp.Core >= LOCKEDVERSION
+
+# put any package references here
+#  Some.Package
+#  framework: net5.0
+#    System.Text.Encoding.CodePages >= LOCKEDVERSION
+#  framework: netstandard2.0
+#    System.Text.Encoding.CodePages >= LOCKEDVERSION

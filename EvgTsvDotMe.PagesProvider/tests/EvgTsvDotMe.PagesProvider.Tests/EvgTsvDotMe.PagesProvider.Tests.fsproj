@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="paket.references" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\EvgTsvDotMe.PagesProvider.Runtime\EvgTsvDotMe.PagesProvider.Runtime.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="View\Pages\Home.fs" />
+    <Compile Include="View\Pages\Blog\Article.fs" />
+    <Compile Include="EvgTsvDotMe.PagesProvider.Tests.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Remove="System.Reflection.Metadata" />
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>
