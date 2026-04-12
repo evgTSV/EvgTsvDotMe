@@ -2,8 +2,9 @@
 
 - F# (Oxpecker)
 - Oxpecker ViewEngine
-- Custom Type Providers
+- HTMX
 - Tailwind CSS
+- Custom Type Providers
 
 ### Quick Start with Windows
 
