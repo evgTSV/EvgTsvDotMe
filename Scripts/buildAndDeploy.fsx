@@ -115,8 +115,18 @@ let workflows = [
             )
             
             step(
+                name = "Verify Docker image",
+                run = "docker images | grep evgtsvdotme"
+            )
+            
+            step(
                 name = "Save Docker image",
-                run = "docker save evgtsvdotme:latest -o /tmp/evgtsvdotme.tar"
+                run = """
+mkdir -p /tmp
+docker save evgtsvdotme:latest -o /tmp/evgtsvdotme.tar
+echo "Docker image saved successfully"
+ls -lh /tmp/evgtsvdotme.tar
+"""
             )
             
             step(
@@ -126,6 +136,7 @@ let workflows = [
                     "name", "docker-image"
                     "path", "/tmp/evgtsvdotme.tar"
                     "retention-days", "1"
+                    "if-no-files-found", "error"
                 ]
             )
         ]
@@ -141,19 +152,31 @@ let workflows = [
                 usesSpec = Auto "actions/download-artifact",
                 options = Map.ofList [
                     "name", "docker-image"
-                    "path", "/tmp"
+                    "path", "${{ runner.temp }}/docker-image"
                 ]
             )
             
             step(
-                name = "Transfer and deploy Docker image",
+                name = "Transfer Docker image",
                 usesSpec = ActionWithVersion "appleboy/scp-action@master",
                 options = Map.ofList [
                     "host", "${{ secrets.SERVER_HOST }}"
                     "username", "${{ secrets.SERVER_USER }}"
                     "key", "${{ secrets.SERVER_SSH_KEY }}"
-                    "source", "/tmp/evgtsvdotme.tar"
+                    "source", "${{ runner.temp }}/docker-image/evgtsvdotme.tar"
                     "target", "/tmp/"
+                ]
+            )
+            
+            step(
+                name = "Transfer docker compose configuration",
+                usesSpec = ActionWithVersion "appleboy/scp-action@master",
+                options = Map.ofList [
+                    "host", "${{ secrets.SERVER_HOST }}"
+                    "username", "${{ secrets.SERVER_USER }}"
+                    "key", "${{ secrets.SERVER_SSH_KEY }}"
+                    "source", "./compose.yaml"
+                    "target", "/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme/"
                 ]
             )
             
@@ -167,16 +190,41 @@ let workflows = [
                     "script", """
 set -e
 REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
+DOCKER_IMAGE_PATH="/tmp/evgtsvdotme.tar"
+
+echo "=== Checking Docker image ==="
+if [ ! -f "$DOCKER_IMAGE_PATH" ]; then
+    echo "Error: Docker image file not found at $DOCKER_IMAGE_PATH"
+    echo "Available files in /tmp:"
+    ls -la /tmp/ | head -20
+    exit 1
+fi
+
+echo "=== Docker image info ==="
+ls -lh "$DOCKER_IMAGE_PATH"
 
 echo "=== Loading Docker image ==="
-docker load -i /tmp/evgtsvdotme.tar
+docker load -i "$DOCKER_IMAGE_PATH"
+
+echo "=== Verifying loaded image ==="
+docker images | grep evgtsvdotme || echo "Warning: Image not found in docker images output"
 
 echo "=== Deploying with docker compose ==="
 cd "$REPO_PATH"
+# Rename the uploaded compose file to docker-compose.yml if it's named compose.yaml
+if [ -f "compose.yaml" ]; then
+    cp compose.yaml docker-compose.yml
+fi
 docker compose up -d
 
+echo "=== Waiting for application to be ready ==="
+sleep 5
+
+echo "=== Checking application status ==="
+docker compose ps
+
 echo "=== Cleaning up ==="
-rm -f /tmp/evgtsvdotme.tar
+rm -f "$DOCKER_IMAGE_PATH"
 
 echo "=== Deployment completed successfully ==="
 """
