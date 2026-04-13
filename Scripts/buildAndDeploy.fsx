@@ -108,6 +108,26 @@ let workflows = [
             setUpDotNetSdkStep
             
             runBuild
+            
+            step(
+                name = "Build Docker image",
+                run = "docker build -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest EvgTsvDotMe/"
+            )
+            
+            step(
+                name = "Save Docker image",
+                run = "docker save evgtsvdotme:latest -o /tmp/evgtsvdotme.tar"
+            )
+            
+            step(
+                name = "Upload Docker image artifact",
+                usesSpec = Auto "actions/upload-artifact",
+                options = Map.ofList [
+                    "name", "docker-image"
+                    "path", "/tmp/evgtsvdotme.tar"
+                    "retention-days", "1"
+                ]
+            )
         ]
         
         job "deploy" [
@@ -116,24 +136,49 @@ let workflows = [
             
             yield! env
             
-            checkoutStep
-            setUpDotNetSdkStep
+            step(
+                name = "Download Docker image artifact",
+                usesSpec = Auto "actions/download-artifact",
+                options = Map.ofList [
+                    "name", "docker-image"
+                    "path", "/tmp"
+                ]
+            )
             
             step(
-                name = "Deploy to server",
+                name = "Transfer and deploy Docker image",
+                usesSpec = ActionWithVersion "appleboy/scp-action@master",
+                options = Map.ofList [
+                    "host", "${{ secrets.SERVER_HOST }}"
+                    "username", "${{ secrets.SERVER_USER }}"
+                    "key", "${{ secrets.SERVER_SSH_KEY }}"
+                    "source", "/tmp/evgtsvdotme.tar"
+                    "target", "/tmp/"
+                ]
+            )
+            
+            step(
+                name = "Load and run Docker image",
                 usesSpec = ActionWithVersion "appleboy/ssh-action@master",
                 options = Map.ofList [
                     "host", "${{ secrets.SERVER_HOST }}"
                     "username", "${{ secrets.SERVER_USER }}"
                     "key", "${{ secrets.SERVER_SSH_KEY }}"
                     "script", """
-cd ~/apps/evgtsvdotme/
-git pull
-sudo chown -R $USER:$USER .
-sudo chmod +x ./build.sh
-./build.sh
-docker compose build
+set -e
+REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
+
+echo "=== Loading Docker image ==="
+docker load -i /tmp/evgtsvdotme.tar
+
+echo "=== Deploying with docker compose ==="
+cd "$REPO_PATH"
 docker compose up -d
+
+echo "=== Cleaning up ==="
+rm -f /tmp/evgtsvdotme.tar
+
+echo "=== Deployment completed successfully ==="
 """
                 ]
             )

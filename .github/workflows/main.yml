@@ -64,6 +64,16 @@ jobs:
     - name: Run build script
       shell: pwsh
       run: ./build.ps1
+    - name: Build Docker image
+      run: docker build -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest EvgTsvDotMe/
+    - name: Save Docker image
+      run: docker save evgtsvdotme:latest -o /tmp/evgtsvdotme.tar
+    - name: Upload Docker image artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: docker-image
+        path: /tmp/evgtsvdotme.tar
+        retention-days: 1
   deploy:
     needs:
     - build
@@ -72,24 +82,38 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
     steps:
-    - name: Check out the sources
-      uses: actions/checkout@v6
-    - name: Set up .NET SDK
-      uses: actions/setup-dotnet@v5
+    - name: Download Docker image artifact
+      uses: actions/download-artifact@v8
       with:
-        dotnet-version: 10.0.x
-    - name: Deploy to server
+        name: docker-image
+        path: /tmp
+    - name: Transfer and deploy Docker image
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        source: /tmp/evgtsvdotme.tar
+        target: /tmp/
+        username: ${{ secrets.SERVER_USER }}
+    - name: Load and run Docker image
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SERVER_HOST }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |2
 
-          cd ~/apps/evgtsvdotme/
-          git pull
-          sudo chown -R $USER:$USER .
-          sudo chmod +x ./build.sh
-          ./build.sh
-          docker compose build
+          set -e
+          REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
+
+          echo "=== Loading Docker image ==="
+          docker load -i /tmp/evgtsvdotme.tar
+
+          echo "=== Deploying with docker compose ==="
+          cd "$REPO_PATH"
           docker compose up -d
+
+          echo "=== Cleaning up ==="
+          rm -f /tmp/evgtsvdotme.tar
+
+          echo "=== Deployment completed successfully ==="
         username: ${{ secrets.SERVER_USER }}
