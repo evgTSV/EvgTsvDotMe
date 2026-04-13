@@ -180,6 +180,10 @@ set -e
 REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
 DOCKER_IMAGE_PATH="/tmp/tmp/evgtsvdotme.tar"
 
+echo "=== Creating application directory ==="
+mkdir -p "$REPO_PATH"
+echo "✓ Application directory created: $REPO_PATH"
+
 echo "=== Checking Docker image ==="
 if [ ! -f "$DOCKER_IMAGE_PATH" ]; then
     echo "Error: Docker image file not found at $DOCKER_IMAGE_PATH"
@@ -199,7 +203,6 @@ docker images | grep evgtsvdotme || echo "Warning: Image not found in docker ima
 
 echo "=== Creating docker compose configuration ==="
 cd "$REPO_PATH"
-touch docker-compose.yml
 cat > docker-compose.yml << 'EOF'
 services:
   webapp:
