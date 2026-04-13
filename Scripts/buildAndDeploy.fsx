@@ -111,7 +111,7 @@ let workflows = [
             
             step(
                 name = "Build Docker image",
-                run = "docker build -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest ./"
+                run = "docker build -f ./EvgTsvDotMe/Dockerfile -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest ./"
             )
             
             step(
