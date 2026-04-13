@@ -61,6 +61,35 @@ jobs:
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 10.0.x
-    - name: Build and Restore
+    - name: Run build script
       shell: pwsh
       run: ./build.ps1
+  deploy:
+    needs:
+    - build
+    runs-on: ubuntu-24.04
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: 1
+    steps:
+    - name: Check out the sources
+      uses: actions/checkout@v6
+    - name: Set up .NET SDK
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.0.x
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |2
+
+          cd ~/apps/evgtsvdotme/
+          git pull
+          sudo chown -R $USER:$USER .
+          sudo chmod +x ./build.sh
+          ./build.sh
+          docker compose build
+          docker compose up -d
+        username: ${{ secrets.SERVER_USER }}

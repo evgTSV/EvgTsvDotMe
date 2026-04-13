@@ -121,7 +121,7 @@ let workflows = [
             
             step(
                 name = "Deploy to server",
-                usesSpec = Auto "appleboy/ssh-action@master",
+                usesSpec = ActionWithVersion "appleboy/ssh-action@master",
                 options = Map.ofList [
                     "host", "${{ secrets.SERVER_HOST }}"
                     "username", "${{ secrets.SERVER_USER }}"
