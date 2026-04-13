@@ -199,6 +199,7 @@ docker images | grep evgtsvdotme || echo "Warning: Image not found in docker ima
 
 echo "=== Creating docker compose configuration ==="
 cd "$REPO_PATH"
+touch docker-compose.yml
 cat > docker-compose.yml << 'EOF'
 services:
   webapp:
