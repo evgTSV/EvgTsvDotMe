@@ -36,6 +36,12 @@ let workflows = [
         usesSpec = checkoutAction
     )
     
+    let runBuild = step(
+        name = "Run build script",
+        shell = "pwsh",
+        run = "./build.ps1"
+    )
+    
     let env = [
         setEnv "DOTNET_CLI_TELEMETRY_OPTOUT" "1"
         setEnv "DOTNET_NOLOGO" "1"
@@ -93,7 +99,7 @@ let workflows = [
             )
         ]
         
-        job "build" [
+        job "build" [            
             runsOn "ubuntu-24.04"
             
             yield! env
@@ -101,10 +107,35 @@ let workflows = [
             checkoutStep
             setUpDotNetSdkStep
             
+            runBuild
+        ]
+        
+        job "deploy" [
+            runsOn "ubuntu-24.04"
+            needs "build"
+            
+            yield! env
+            
+            checkoutStep
+            setUpDotNetSdkStep
+            
             step(
-                name = "Build and Restore",
-                shell = "pwsh",
-                run = "./build.ps1"
+                name = "Deploy to server",
+                usesSpec = Auto "appleboy/ssh-action@master",
+                options = Map.ofList [
+                    "host", "${{ secrets.SERVER_HOST }}"
+                    "username", "${{ secrets.SERVER_USER }}"
+                    "key", "${{ secrets.SERVER_SSH_KEY }}"
+                    "script", """
+cd ~/apps/evgtsvdotme/
+git pull
+sudo chown -R $USER:$USER .
+sudo chmod +x ./build.sh
+./build.sh
+docker compose build
+docker compose up -d
+"""
+                ]
             )
         ]
     ]
