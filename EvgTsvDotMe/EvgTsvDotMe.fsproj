@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Utils.fs" />
+    <Compile Include="CssUtils.fs" />
     <Compile Include="Localization\Translations.fs" />
     <Compile Include="Env.fs" />
     <Compile Include="Models.fs" />

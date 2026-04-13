@@ -1,8 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "../EvgTsvDotMe/View/**/*.{fs,html}",
-    "../EvgTsvDotMe/Pages/**/*.{fs,html}",
+    "./classes.html",
   ],
   theme: {
     extend: {

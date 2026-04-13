@@ -23,7 +23,17 @@ let endpoints = [
 let configureServices (services: IServiceCollection) = %services.AddRouting().AddOxpecker()
 
 let configureApp (app: WebApplication) =
-    %app.UseStaticFiles().Use(errorHandler).UseRouting().UseOxpecker(endpoints).Run(notFoundHandler)
+    // Configure static files with cache headers
+    let cacheOptions = StaticFileOptions(
+        OnPrepareResponse = _.Context.Response.Headers.Add("Cache-Control", "public, max-age=31536000")
+    )
+    
+    %app
+        .UseStaticFiles(cacheOptions)
+        .Use(errorHandler)
+        .UseRouting()
+        .UseOxpecker(endpoints)
+        .Run(notFoundHandler)
 
 let run () =
     let builder = WebApplication.CreateBuilder()
