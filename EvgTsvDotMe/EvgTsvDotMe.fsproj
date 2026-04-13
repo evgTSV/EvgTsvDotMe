@@ -5,6 +5,10 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="..\paket-files\cdn.jsdelivr.net\htmx.min.js">
+      <Paket>True</Paket>
+      <Link>paket-files/htmx.min.js</Link>
+    </Content>
     <Compile Include="Utils.fs" />
     <Compile Include="CssUtils.fs" />
     <Compile Include="Localization\Translations.fs" />
@@ -24,6 +28,10 @@
     </Content>
     <Content Include="Dockerfile" />
     <Content Include="paket.references" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\js\" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
