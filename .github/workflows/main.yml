@@ -69,7 +69,7 @@ jobs:
     - name: Verify Docker image
       run: docker images | grep evgtsvdotme
     - name: Save Docker image
-      run: |2
+      run: |2+
 
         mkdir -p /tmp
         docker save evgtsvdotme:latest -o /tmp/evgtsvdotme.tar
@@ -90,6 +90,8 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
     steps:
+    - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      name: Block pull request deployments
     - name: Download Docker image artifact
       uses: actions/download-artifact@v8
       with:
@@ -108,7 +110,7 @@ jobs:
       with:
         host: ${{ secrets.SERVER_HOST }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        script: |2
+        script: |2+
 
           set -e
           REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
