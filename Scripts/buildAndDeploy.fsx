@@ -169,18 +169,6 @@ ls -lh /tmp/evgtsvdotme.tar
             )
             
             step(
-                name = "Transfer docker compose configuration",
-                usesSpec = ActionWithVersion "appleboy/scp-action@master",
-                options = Map.ofList [
-                    "host", "${{ secrets.SERVER_HOST }}"
-                    "username", "${{ secrets.SERVER_USER }}"
-                    "key", "${{ secrets.SERVER_SSH_KEY }}"
-                    "source", "./compose.yaml"
-                    "target", "/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme/"
-                ]
-            )
-            
-            step(
                 name = "Load and run Docker image",
                 usesSpec = ActionWithVersion "appleboy/ssh-action@master",
                 options = Map.ofList [
@@ -209,12 +197,23 @@ docker load -i "$DOCKER_IMAGE_PATH"
 echo "=== Verifying loaded image ==="
 docker images | grep evgtsvdotme || echo "Warning: Image not found in docker images output"
 
-echo "=== Deploying with docker compose ==="
+echo "=== Creating docker compose configuration ==="
 cd "$REPO_PATH"
-# Rename the uploaded compose file to docker-compose.yml if it's named compose.yaml
-if [ -f "compose.yaml" ]; then
-    cp compose.yaml docker-compose.yml
-fi
+cat > docker-compose.yml << 'EOF'
+services:
+  webapp:
+    image: evgtsvdotme
+    build:
+      context: .
+      dockerfile: EvgTsvDotMe/Dockerfile
+    ports:
+      - "8080:8080"
+    read_only: true   
+    security_opt:
+      - "no-new-privileges=true"
+EOF
+
+echo "=== Deploying with docker compose ==="
 docker compose up -d
 
 echo "=== Waiting for application to be ready ==="
