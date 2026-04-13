@@ -65,12 +65,20 @@ jobs:
       shell: pwsh
       run: ./build.ps1
     - name: Build Docker image
-      run: docker build -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest .
+      run: docker build -f ./EvgTsvDotMe/Dockerfile -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest ./
+    - name: Verify Docker image
+      run: docker images | grep evgtsvdotme
     - name: Save Docker image
-      run: docker save evgtsvdotme:latest -o /tmp/evgtsvdotme.tar
+      run: |2+
+
+        mkdir -p /tmp
+        docker save evgtsvdotme:latest -o /tmp/evgtsvdotme.tar
+        echo "Docker image saved successfully"
+        ls -lh /tmp/evgtsvdotme.tar
     - name: Upload Docker image artifact
       uses: actions/upload-artifact@v7
       with:
+        if-no-files-found: error
         name: docker-image
         path: /tmp/evgtsvdotme.tar
         retention-days: 1
@@ -82,12 +90,13 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
     steps:
-    - name: Download Docker image artifact
+    - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      name: Download Docker image artifact
       uses: actions/download-artifact@v8
       with:
         name: docker-image
         path: /tmp
-    - name: Transfer and deploy Docker image
+    - name: Transfer Docker image
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -100,20 +109,60 @@ jobs:
       with:
         host: ${{ secrets.SERVER_HOST }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        script: |2
+        script: |2+
 
           set -e
           REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
+          DOCKER_IMAGE_PATH="/tmp/tmp/evgtsvdotme.tar"
+
+          echo "=== Creating application directory ==="
+          mkdir -p "$REPO_PATH"
+          echo "✓ Application directory created: $REPO_PATH"
+
+          echo "=== Checking Docker image ==="
+          if [ ! -f "$DOCKER_IMAGE_PATH" ]; then
+              echo "Error: Docker image file not found at $DOCKER_IMAGE_PATH"
+              echo "Available files in /tmp:"
+              ls -la /tmp/tmp/ | head -20
+              exit 1
+          fi
+
+          echo "=== Docker image info ==="
+          ls -lh "$DOCKER_IMAGE_PATH"
 
           echo "=== Loading Docker image ==="
-          docker load -i /tmp/evgtsvdotme.tar
+          docker load -i "$DOCKER_IMAGE_PATH"
+
+          echo "=== Verifying loaded image ==="
+          docker images | grep evgtsvdotme || echo "Warning: Image not found in docker images output"
+
+          echo "=== Creating docker compose configuration ==="
+          cd "$REPO_PATH"
+          cat > docker-compose.yml << 'EOF'
+          services:
+            webapp:
+              image: evgtsvdotme
+              build:
+                context: .
+                dockerfile: EvgTsvDotMe/Dockerfile
+              ports:
+                - "8080:8080"
+              read_only: true   
+              security_opt:
+                - "no-new-privileges=true"
+          EOF
 
           echo "=== Deploying with docker compose ==="
-          cd "$REPO_PATH"
           docker compose up -d
 
+          echo "=== Waiting for application to be ready ==="
+          sleep 5
+
+          echo "=== Checking application status ==="
+          docker compose ps
+
           echo "=== Cleaning up ==="
-          rm -f /tmp/evgtsvdotme.tar
+          rm -f "$DOCKER_IMAGE_PATH"
 
           echo "=== Deployment completed successfully ==="
         username: ${{ secrets.SERVER_USER }}

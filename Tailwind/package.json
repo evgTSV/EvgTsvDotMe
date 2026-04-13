@@ -2,16 +2,22 @@
   "name": "tailwind",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development npx @tailwindcss/cli -i ./input.css -o ../EvgTsvDotMe/wwwroot/css/style.css",
-    "build": "npx @tailwindcss/cli -i ./input.css -o ../EvgTsvDotMe/wwwroot/css/style.css --minify"
+    "extract": "node extract-classes.js",
+    "dev": "npm run extract && cross-env NODE_ENV=development npx @tailwindcss/cli -i ./input.css -o ../EvgTsvDotMe/wwwroot/css/style.css",
+    "build": "npm run extract && npx @tailwindcss/cli -i ./input.css -o ../EvgTsvDotMe/wwwroot/css/style.css --minify"
   },
   "keywords": [],
   "author": "",
   "license": "",
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.12",
+    "cross-env": "^7.0.3",
     "tailwindcss": "^4.0.12"
+  },
+  "dependencies": {
+    "glob": "^13.0.6"
   }
 }
