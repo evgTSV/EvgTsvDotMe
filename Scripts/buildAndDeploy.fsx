@@ -148,17 +148,13 @@ ls -lh /tmp/evgtsvdotme.tar
             yield! env
             
             step(
-                name = "Block pull request deployments",
-                condition = "github.event_name == 'push' && github.ref == 'refs/heads/main'"
-            )
-            
-            step(
                 name = "Download Docker image artifact",
                 usesSpec = Auto "actions/download-artifact",
                 options = Map.ofList [
                     "name", "docker-image"
                     "path", "/tmp"
-                ]
+                ],
+                condition = "github.event_name == 'push' && github.ref == 'refs/heads/main'"
             )
             
             step(
