@@ -9,8 +9,8 @@ open type Generaptor.GitHubActions.Commands
 let fileName = "buildAndDeploy"
 let scriptsDir = "./Scripts"
 
-let scriptPath = System.IO.Path.Combine(scriptsDir, $"{fileName}.fsx")
-let testEncodingScriptPath = System.IO.Path.Combine(scriptsDir, "Test-Encoding.ps1")
+let scriptPath = $"{scriptsDir}/{fileName}.fsx"
+let testEncodingScriptPath = $"{scriptsDir}/Test-Encoding.ps1"
 
 let workflows = [
     let workflow name body = workflow name [
