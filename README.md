@@ -39,3 +39,8 @@ docker compose up
 docker compose up
 ```
 
+### Generate GitHub workflows
+
+```bash
+dotnet fsi ./Scripts/buildAndDeploy.fsx
+```
