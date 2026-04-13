@@ -47,6 +47,7 @@ jobs:
       with:
         dotnet-version: 10.0.x
     - name: Verify generated CI definition
+      shell: pwsh
       run: dotnet fsi ./Scripts\buildAndDeploy.fsx verify
   build:
     runs-on: ubuntu-24.04
@@ -61,4 +62,5 @@ jobs:
       with:
         dotnet-version: 10.0.x
     - name: Build and Restore
-      run: ./build.sh
+      shell: pwsh
+      run: ./build.ps1
