@@ -65,7 +65,7 @@ jobs:
       shell: pwsh
       run: ./build.ps1
     - name: Build Docker image
-      run: docker build -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest .
+      run: docker build -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest ./
     - name: Save Docker image
       run: docker save evgtsvdotme:latest -o /tmp/evgtsvdotme.tar
     - name: Upload Docker image artifact
