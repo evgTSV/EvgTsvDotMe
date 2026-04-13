@@ -94,13 +94,13 @@ jobs:
       uses: actions/download-artifact@v8
       with:
         name: docker-image
-        path: ${{ runner.temp }}/docker-image
+        path: /tmp
     - name: Transfer Docker image
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.SERVER_HOST }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        source: ${{ runner.temp }}/docker-image/evgtsvdotme.tar
+        source: /tmp/evgtsvdotme.tar
         target: /tmp/
         username: ${{ secrets.SERVER_USER }}
     - name: Load and run Docker image

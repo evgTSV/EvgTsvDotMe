@@ -152,7 +152,7 @@ ls -lh /tmp/evgtsvdotme.tar
                 usesSpec = Auto "actions/download-artifact",
                 options = Map.ofList [
                     "name", "docker-image"
-                    "path", "${{ runner.temp }}/docker-image"
+                    "path", "/tmp"
                 ]
             )
             
@@ -163,7 +163,7 @@ ls -lh /tmp/evgtsvdotme.tar
                     "host", "${{ secrets.SERVER_HOST }}"
                     "username", "${{ secrets.SERVER_USER }}"
                     "key", "${{ secrets.SERVER_SSH_KEY }}"
-                    "source", "${{ runner.temp }}/docker-image/evgtsvdotme.tar"
+                    "source", "/tmp/evgtsvdotme.tar"
                     "target", "/tmp/"
                 ]
             )
