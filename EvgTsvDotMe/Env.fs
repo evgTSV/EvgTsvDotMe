@@ -6,7 +6,8 @@ open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Logging
 open EvgTsvDotMe.PageResolving
 
-let inline logger (ctx: HttpContext) = ctx.RequestServices.GetRequiredService<ILogger>()
+let inline logger (ctx: HttpContext) =
+    ctx.RequestServices.GetRequiredService<ILogger>()
 
 type Pages = PagesProvider<PagesDir="View/Pages">
 

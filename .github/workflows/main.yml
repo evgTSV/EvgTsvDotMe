@@ -47,7 +47,7 @@ jobs:
       with:
         dotnet-version: 10.0.x
     - name: Verify generated CI definition
-      run: dotnet fsi ./Scripts\build-and-deploy.fsx verify
+      run: dotnet fsi ./Scripts\buildAndDeploy.fsx verify
   build:
     runs-on: ubuntu-24.04
     env:

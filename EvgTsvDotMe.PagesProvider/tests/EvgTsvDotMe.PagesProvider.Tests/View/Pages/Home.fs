@@ -1,4 +1,4 @@
-﻿namespace EvgTsvDotMe.PagesProvider.Tests.View.Pages
+namespace EvgTsvDotMe.PagesProvider.Tests.View.Pages
 
 module Home =
 

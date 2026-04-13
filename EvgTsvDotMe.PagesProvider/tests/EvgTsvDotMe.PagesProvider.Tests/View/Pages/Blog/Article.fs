@@ -1,2 +1,2 @@
-﻿module EvgTsvDotMe.PagesProvider.Tests.View.Pages.Blog.Article
+module EvgTsvDotMe.PagesProvider.Tests.View.Pages.Blog.Article
 

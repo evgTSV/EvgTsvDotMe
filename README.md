@@ -1,4 +1,4 @@
-﻿### What's inside
+### What's inside
 
 - F# (Oxpecker)
 - Oxpecker ViewEngine
@@ -43,4 +43,10 @@ docker compose up
 
 ```bash
 dotnet fsi ./Scripts/buildAndDeploy.fsx
+```
+
+### Code formatting
+
+```bash
+dotnet fantomas .
 ```
