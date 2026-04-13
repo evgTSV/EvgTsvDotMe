@@ -11,34 +11,24 @@ EXPOSE 443
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0.201-alpine3.23 AS build
 WORKDIR /src
 
-COPY .paket/. ./src/
-
-COPY EvgTsvDotMe/. ./src/
-
-COPY Tailwind ./src/Tailwind
+COPY . .
 
 RUN apk add --no-cache nodejs npm
 
-RUN dotnet restore "src/EvgTsvDotMe/EvgTsvDotMe.fsproj" --configfile nuget.config --nologo -v q -a "$TARGETARCH" --property WarningLevel=0 /clp:ErrorsOnly
+RUN dotnet tool restore
+RUN dotnet paket update
+RUN dotnet paket restore
 
-WORKDIR "src/EvgTsvDotMe/"
+RUN dotnet restore "EvgTsvDotMe/EvgTsvDotMe.fsproj"
 
-RUN dotnet build "EvgTsvDotMe.fsproj" -a "$TARGETARCH" -c Release --no-restore -o /app/build --nologo -v q --property WarningLevel=0 /clp:ErrorsOnly
+WORKDIR /src/Tailwind
+RUN npm install && npm run build
 
-WORKDIR "src/Tailwind"
-
-RUN npm install
-
-RUN npm run build
-
-WORKDIR "src/EvgTsvDotMe/"
-
-FROM build AS publish
+WORKDIR /src/EvgTsvDotMe
 RUN dotnet publish "EvgTsvDotMe.fsproj" -a "$TARGETARCH" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
-
+COPY --from=build /app/publish .
 USER $APP_UID
 ENTRYPOINT ["dotnet", "EvgTsvDotMe.dll"]
