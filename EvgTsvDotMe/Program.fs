@@ -24,10 +24,12 @@ let configureServices (services: IServiceCollection) = %services.AddRouting().Ad
 
 let configureApp (app: WebApplication) =
     // Configure static files with cache headers
-    let cacheOptions = StaticFileOptions(
-        OnPrepareResponse = _.Context.Response.Headers.Add("Cache-Control", "public, max-age=31536000")
-    )
-    
+    let cacheOptions =
+        StaticFileOptions(
+            OnPrepareResponse =
+                _.Context.Response.Headers.Add("Cache-Control", "public, max-age=31536000")
+        )
+
     %app
         .UseStaticFiles(cacheOptions)
         .Use(errorHandler)
