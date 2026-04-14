@@ -2,6 +2,7 @@ module EvgTsvDotMe.View.Layout
 
 open System
 open EvgTsvDotMe.CssUtils
+open EvgTsvDotMe.View.Components
 open Microsoft.AspNetCore.Http
 open Oxpecker.ViewEngine
 open Oxpecker.Htmx
@@ -27,7 +28,12 @@ let topNavBar (ctx: HttpContext) =
             div( class' = "flex items-center justify-between h-14" ) {
                 
                 div( class' = "flex items-center gap-4" ) {
-                    span( class' = "text-lg font-bold font-mono text-white tracking-widest" ) {
+                    span(
+                        class' = "text-lg font-bold font-mono text-white tracking-widest",
+                        hxGet = "/",
+                        hxTarget = "#main-content",
+                        hxPushUrl = "true"
+                    ) {
                         b() { raw "EVG_TSV" }
                         span( class' = "text-green-600" ) { raw ":" }
                         span( class' = "text-zinc-500 text-sm" ) { raw (Guid.NewGuid().ToString()[..4]) }
@@ -39,14 +45,21 @@ let topNavBar (ctx: HttpContext) =
                         navLink lang.NavBar.CurriculumVitae "/cv"
                     }
                 }
-
-                div( class' = "flex items-center gap-3" ) {
-                    div( class' = "flex items-center gap-2 px-3 py-1 bg-zinc-900 border border-zinc-700" ) {
-                        div( class' = "w-2 h-2 rounded-full bg-green-500 animate-pulse" ) {}
-                        span( class' = "text-[10px] font-mono text-zinc-400 uppercase tracking-widest" ) { 
-                            raw "FSharp.Optimized" 
-                        }
+                
+                a(
+                    href = "https://fsharp.org",
+                    target = "_blank",
+                    rel = "noopener noreferrer",
+                    class' = "flex items-center gap-2 px-3 py-1 bg-zinc-900 border border-zinc-700 rounded-md hover:bg-zinc-800 hover:border-green-500/50 transition-all duration-300 group"
+                ) {
+                    div( class' = "w-5 h-5 text-zinc-400 transition-all duration-300 group-hover:text-green-400 group-hover:drop-shadow-[0_0_4px_rgba(225,24,192,0.5)]" ) {
+                        Svg.Logos.FSharpDark()
                     }
+                    span( class' = "text-[10px] font-mono text-zinc-400 uppercase tracking-widest group-hover:text-green-400 transition-all duration-300" ) { 
+                        raw "FSharp.Optimized" 
+                    }
+                    
+                    div( class' = "w-2 h-2 rounded-full bg-green-500 animate-pulse" ) {}
                 }
             }
         }

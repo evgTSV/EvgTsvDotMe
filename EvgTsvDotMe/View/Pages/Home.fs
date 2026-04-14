@@ -17,7 +17,7 @@ let html (ctx: HttpContext) =
         }
 
         div(class' = "grid gap-6") {
-            div(class' = "p-6 bg-zinc-900 border border-zinc-800") {
+            div(class' = "p-6 bg-zinc-900 border border-zinc-800 overflow-x-auto w-full") {
                 h2(class' = "text-zinc-100 text-xl mb-4") { "[ RECENT_ACTIVITY ]" }
                 div(id = "activity-log", class' = "text-zinc-500 text-sm") { "Loading chunks..." }
                 

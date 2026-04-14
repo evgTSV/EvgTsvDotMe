@@ -6,9 +6,9 @@ open Oxpecker.Htmx
 open EvgTsvDotMe.Models
 
 let html (error: ApiError) =
-    main(class' = "pt-20 pb-10 px-4 max-w-4xl mx-auto font-mono") {
+    main(class' = "pt-20 pb-10 px-4 max-w-4xl mx-auto font-mono overflow-x-auto") {
         section(class' = "mb-12") {
-            h1(class' = "text-5xl font-black text-red-500 tracking-tighter mb-2") { "Error" }
+            h1(class' = "text-5xl font-black text-red-500 tracking-widest mb-2") { $"%i{int(error.code)}" }
             p(class' = "text-zinc-500 text-lg") { error.message }
         }
 
@@ -24,7 +24,7 @@ let html (error: ApiError) =
                 hxGet = "/",
                 hxTarget = "#main-content",
                 hxPushUrl = "true"
-            ) { raw "Go Back Home" }
+            ) { "Go Back Home" }
         }
     }
     |> pageLayout

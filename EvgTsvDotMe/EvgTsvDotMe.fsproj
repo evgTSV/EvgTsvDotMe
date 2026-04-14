@@ -14,6 +14,7 @@
     <Compile Include="Localization\Translations.fs" />
     <Compile Include="Env.fs" />
     <Compile Include="Models.fs" />
+    <Compile Include="View\Components\Svg.fs" />
     <Compile Include="View\Layout.fs" />
     <Compile Include="View\Pages\Home.fs" />
     <Compile Include="View\Error.fs" />
