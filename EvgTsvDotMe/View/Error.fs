@@ -1,3 +1,4 @@
+[<RequireQualifiedAccess>]
 module EvgTsvDotMe.View.Error
 
 open EvgTsvDotMe.View.Layout

@@ -3,7 +3,6 @@ module EvgTsvDotMe.View.Layout
 open System
 open EvgTsvDotMe.CssUtils
 open EvgTsvDotMe.View.Components
-open EvgTsvDotMe.View.Components.Svg
 open Microsoft.AspNetCore.Http
 open Oxpecker.ViewEngine
 open Oxpecker.Htmx
@@ -30,7 +29,7 @@ let topNavBar (ctx: HttpContext) =
                 
                 div( class' = "flex items-center gap-4" ) {
                     span(
-                        class' = "text-lg font-bold font-mono text-white tracking-widest",
+                        class' = "text-lg font-bold font-mono text-white tracking-widest cursor-pointer",
                         hxGet = "/",
                         hxTarget = "#main-content",
                         hxPushUrl = "true"
@@ -80,7 +79,7 @@ let pageLayout (content: HtmlElement) (ctx: HttpContext) =
             meta(charset = "utf-8")
             meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
             title() { "EvgTsv.me" }
-            link(rel = "icon", type' = "image/svg+xml", href = favicon)
+            link(rel = "icon", type' = "image/svg+xml", href = Svg.favicon)
             link(rel = "stylesheet", href = versionedCssPath())
             script(src = "/js/htmx.min.js") {}
         }

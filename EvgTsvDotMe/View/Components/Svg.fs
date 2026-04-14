@@ -1,3 +1,4 @@
+[<RequireQualifiedAccess>]
 module EvgTsvDotMe.View.Components.Svg
 
 open System

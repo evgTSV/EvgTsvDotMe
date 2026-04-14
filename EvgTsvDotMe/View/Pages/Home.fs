@@ -1,3 +1,4 @@
+[<RequireQualifiedAccess>]
 module EvgTsvDotMe.View.Pages.Home
 
 open EvgTsvDotMe.Utils
