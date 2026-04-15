@@ -13,8 +13,7 @@ WORKDIR /src
 
 COPY . .
 
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-RUN apk add --no-cache nodejs npm
+RUN apk add --no-cache nodejs npm curl
 
 RUN dotnet tool restore
 RUN dotnet paket update
