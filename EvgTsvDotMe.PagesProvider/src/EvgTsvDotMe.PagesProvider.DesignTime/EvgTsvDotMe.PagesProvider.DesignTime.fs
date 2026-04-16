@@ -65,7 +65,7 @@ type PagesProvider(config: TypeProviderConfig) as this =
     let rec createPageTy (info: PageInfo) =
         match info with
         | PageInfo(name, path) ->
-            let pageTy = ProvidedTypeDefinition(asm, ns, name, Some typeof<obj>)
+            let pageTy = ProvidedTypeDefinition(asm, ns, name, Some typeof<obj>, isErased=true)
                 
             let pathProp =
                     ProvidedProperty("Path", typeof<string>,
@@ -75,12 +75,12 @@ type PagesProvider(config: TypeProviderConfig) as this =
             
             pageTy
         | SubModule(name, inners) ->
-            let modTy = ProvidedTypeDefinition(asm, ns, name, Some typeof<obj>)
+            let modTy = ProvidedTypeDefinition(asm, ns, name, Some typeof<obj>, isErased=true)
             inners |> List.map createPageTy |> List.iter modTy.AddMember
             modTy
 
     let createTypes (typeName, pagesDir, basePath) =
-        let t = ProvidedTypeDefinition(asm, ns, typeName, Some typeof<obj>)
+        let t = ProvidedTypeDefinition(asm, ns, typeName, Some typeof<obj>, isErased=true)
         
         getAllPages config pagesDir basePath
         |> List.map createPageTy
@@ -89,7 +89,7 @@ type PagesProvider(config: TypeProviderConfig) as this =
         t
 
     do
-        let pagesContainer = ProvidedTypeDefinition(asm, ns, "PagesProvider", Some typeof<obj>)
+        let pagesContainer = ProvidedTypeDefinition(asm, ns, "PagesProvider", Some typeof<obj>, isErased=true)
         let staticParams = [
             ProvidedStaticParameter("PagesDir", typeof<string>)
             ProvidedStaticParameter("BasePath", typeof<string>,
