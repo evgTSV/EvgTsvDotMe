@@ -6,4 +6,4 @@ riderModule.iml
 /EvgTsvDotMe.PagesProvider/.paket
 /EvgTsvDotMe.PagesProvider/packages
 /EvgTsvDotMe.PagesProvider/paket-files
-*.lock
+.env

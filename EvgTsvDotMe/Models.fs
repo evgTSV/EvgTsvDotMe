@@ -11,3 +11,16 @@ type ApiError = {
     path: string
     details: obj option
 }
+
+[<RequireQualifiedAccess>]
+type PRStatus =
+    | Open
+    | Closed
+    | Merged
+
+type PullRequest = {
+    id: int
+    title: string
+    url: string
+    status: PRStatus
+}

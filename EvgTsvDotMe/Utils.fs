@@ -21,3 +21,16 @@ let inline memoAsync (cmp: IEqualityComparer<'a>) (f: 'a -> Async<'b>) =
         }
 
 let inline swap f a b = f b a
+
+let tryGetEnv name =
+    match System.Environment.GetEnvironmentVariable name with
+    | null -> None
+    | value -> Some value
+
+let getEnv name  =  
+    match tryGetEnv name with
+    | Some value -> value
+    | None -> failwithf $"Environment variable '%s{name}' not found"
+    
+let getEnvOrDefault name defaultValue =
+    tryGetEnv name |> Option.defaultValue defaultValue

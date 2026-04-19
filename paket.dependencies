@@ -7,6 +7,7 @@ http https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js
 nuget FSharp.SystemTextJson
 nuget FsToolkit.ErrorHandling
 nuget FSharp.Data
+nuget Octokit
 nuget Oxpecker ~> 2.0.0
 nuget Oxpecker.Htmx ~> 2.0.0
 nuget Oxpecker.OpenApi ~> 2.1.1

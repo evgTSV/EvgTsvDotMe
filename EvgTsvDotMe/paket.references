@@ -1,6 +1,7 @@
 FSharp.SystemTextJson
 FsToolkit.ErrorHandling
 FSharp.Data
+Octokit
 Oxpecker
 Oxpecker.Htmx
 Oxpecker.OpenApi
