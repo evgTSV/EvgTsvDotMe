@@ -116,6 +116,7 @@ let workflows = [
         
         job "build" [
             runsOn "ubuntu-24.04"
+            needs "verify-workflows"
 
             yield! env
             

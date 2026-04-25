@@ -57,6 +57,8 @@ jobs:
     - name: Verify generated CI definition
       run: dotnet run --project build/build.fsproj -t VerifyWorkflow
   build:
+    needs:
+    - verify-workflows
     runs-on: ubuntu-24.04
     env:
       CI: true
@@ -112,7 +114,7 @@ jobs:
       shell: pwsh
       run: ./build.ps1
     - name: Build Docker image
-      run: docker build --platform linux/amd64 -f ./EvgTsvDotMe/Dockerfile -t evgtsvdotme:${ github.sha } -t evgtsvdotme:latest ./
+      run: docker build --platform linux/amd64 -f ./EvgTsvDotMe/Dockerfile -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest ./
     - name: Verify Docker image
       run: docker images | grep evgtsvdotme
     - name: Save Docker image
