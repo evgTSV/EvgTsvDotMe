@@ -36,6 +36,18 @@ let workflows = [
         usesSpec = checkoutAction
     )
     
+    let restoreDeps = [
+        step(
+            name = "Restore tools",
+            run = "dotnet tool restore"
+        )
+        
+        step(
+            name = "Restore Paket dependencies",
+            run = "dotnet paket restore"
+        )
+    ]
+    
     let runBuild = step(
         name = "Run build script",
         shell = "pwsh",
@@ -80,10 +92,7 @@ let workflows = [
             checkoutStep
             setUpDotNetSdkStep
             
-            step(
-                name = "Restore tools",
-                run = "dotnet tool restore"
-            )
+            yield! restoreDeps
             step(
                 name = "Verify code format",
                 run = "dotnet run --project build/build.fsproj -t CheckFormat"
@@ -98,6 +107,7 @@ let workflows = [
             checkoutStep
             setUpDotNetSdkStep
 
+            yield! restoreDeps
             step(
                 name = "Verify generated CI definition",
                 run = "dotnet run --project build/build.fsproj -t VerifyWorkflow"
@@ -124,6 +134,7 @@ let workflows = [
             checkoutStep
             setUpDotNetSdkStep
             
+            yield! restoreDeps
             runTests
         ]
         
