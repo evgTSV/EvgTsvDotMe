@@ -49,7 +49,7 @@ options:
     let publishOutput = args |> argValOrNone "--PublishOutput"
     let targetArch = args |> argValOrNone "--Arch"
     let targetProject = args |> argValOrDefault "--TargetProject" "EvgTsvDotMe.sln"
-    
+
     let workflowScriptPath = "./Scripts/buildAndDeploy.fsx"
 
     // --------------------------------------------------------------------------------------
@@ -266,19 +266,19 @@ options:
         else
             Trace.logf $"Errors while formatting: %A{result.Errors}"
             failwith "Unknown errors while formatting")
-    
+
     Target.create "VerifyWorkflow" (fun _ ->
         let result = DotNet.exec id "fsi" $"{workflowScriptPath} verify"
-        
+
         if not result.OK then
             Trace.logf $"Workflow verification failed with messages: %A{result.Messages}"
             failwith "Workflow verification failed"
         else
             Trace.log "Workflow verification succeeded")
-    
+
     Target.create "GenWorkflow" (fun _ ->
         let result = DotNet.exec id "fsi" $"{workflowScriptPath}"
-        
+
         if not result.OK then
             Trace.logf $"Workflow generation failed with messages: %A{result.Messages}"
             failwith "Workflow generation failed"
