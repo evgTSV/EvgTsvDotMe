@@ -1,3 +1,6 @@
-EvgTsvDotMe.PagesProvider/
-EvgTsvDotMe/View/
+src/EvgTsvDotMe.PagesProvider.*/
+src/EvgTsvDotMe/View/
 Scripts/
+paket-files/
+tests/
+packages/

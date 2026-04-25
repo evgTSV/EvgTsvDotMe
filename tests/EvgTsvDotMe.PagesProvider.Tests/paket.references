@@ -1,0 +1,8 @@
+group ProviderSDK
+    FSharp.Core
+group Test
+    Microsoft.NET.Test.Sdk
+    Verify.Xunit
+    xunit
+    xunit.runner.visualstudio
+    GitHubActionsTestLogger

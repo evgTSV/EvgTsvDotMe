@@ -7,7 +7,7 @@
       "commands": [
         "paket"
       ],
-      "rollForward": true
+      "rollForward": false
     },
     "fantomas": {
       "version": "7.0.5",

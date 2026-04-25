@@ -9,23 +9,23 @@ EXPOSE 8080
 EXPOSE 443
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0.201-alpine3.23 AS build
-WORKDIR /src
+COPY /src /src
 
-COPY . .
+COPY /global.json /global.json
+COPY /paket.dependencies /paket.dependencies
+COPY /paket.lock /paket.lock
+COPY /.fantomasignore /.fantomasignore
+COPY /.config/dotnet-tools.json /.config/dotnet-tools.json
+COPY /build /build
+
+WORKDIR /
 
 RUN apk add --no-cache nodejs npm curl
 
 RUN dotnet tool restore
-RUN dotnet paket update
 RUN dotnet paket restore
 
-RUN dotnet restore "EvgTsvDotMe/EvgTsvDotMe.fsproj"
-
-WORKDIR /src/Tailwind
-RUN npm install && npm run build
-
-WORKDIR /src/EvgTsvDotMe
-RUN dotnet publish "EvgTsvDotMe.fsproj" -a "$TARGETARCH" -c Release -o /app/publish
+RUN dotnet run --project build/build.fsproj -t Publish -- --TargetProject "src/EvgTsvDotMe/EvgTsvDotMe.fsproj" --Arch "$TARGETARCH" --PublishOutput "/app/publish"
 
 FROM base AS final
 WORKDIR /app

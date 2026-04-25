@@ -5,7 +5,7 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="..\paket-files\cdn.jsdelivr.net\htmx.min.js">
+    <Content Include="..\..\paket-files\cdn.jsdelivr.net\htmx.min.js">
       <Paket>True</Paket>
       <Link>paket-files/htmx.min.js</Link>
     </Content>
@@ -24,7 +24,7 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\.dockerignore">
+    <Content Include="..\..\.dockerignore">
       <Link>.dockerignore</Link>
     </Content>
     <Content Include="Dockerfile" />
@@ -34,5 +34,8 @@
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\js\" />
   </ItemGroup>
-  <Import Project="..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\EvgTsvDotMe.PagesProvider.Runtime\EvgTsvDotMe.PagesProvider.Runtime.fsproj" />
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
