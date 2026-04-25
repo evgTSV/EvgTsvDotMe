@@ -3,7 +3,7 @@ services:
     image: evgtsvdotme
     build:
       context: .
-      dockerfile: EvgTsvDotMe/Dockerfile
+      dockerfile: src/EvgTsvDotMe/Dockerfile
     ports:
       - "8080:8080"
     read_only: true

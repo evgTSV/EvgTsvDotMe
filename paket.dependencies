@@ -1,6 +1,5 @@
 frameworks: net10.0
 source https://api.nuget.org/v3/index.json
-source ./EvgTsvDotMe.PagesProvider/output
 
 http https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js
 
@@ -11,6 +10,55 @@ nuget Octokit
 nuget Oxpecker ~> 2.0.0
 nuget Oxpecker.Htmx ~> 2.0.0
 nuget Oxpecker.OpenApi ~> 2.1.1
-nuget EvgTsvDotMe.PagesProvider
 
-storage: none
+group Fake
+    frameworks: net10.0
+    source https://api.nuget.org/v3/index.json
+    storage: none
+
+    nuget Fake.Testing.Common          6.1.4
+    nuget Fake.Net.Http                6.1.4
+    nuget Fake.IO.FileSystem           6.1.4
+    nuget Fake.Core.CommandLineParsing 6.1.4
+    nuget Fake.Core.Environment        6.1.4
+    nuget Fake.Core.FakeVar            6.1.4
+    nuget Fake.Core.SemVer             6.1.4
+    nuget Fake.Core.String             6.1.4
+    nuget Fake.Core.Context            6.1.4
+    nuget Fake.Core.Trace              6.1.4
+    nuget Fake.Core.Tasks              6.1.4
+    nuget Fake.Core.Target             6.1.4
+    nuget Fake.Core.ReleaseNotes       6.1.4
+    nuget Fake.DotNet.AssemblyInfoFile 6.1.4
+    nuget Fake.DotNet.Cli              6.1.4
+    nuget Fake.DotNet.Testing.NUnit    6.1.4
+    nuget Fake.DotNet.NuGet            6.1.4
+    nuget Fake.DotNet.MsBuild          6.1.4
+    nuget Fake.DotNet.Paket            6.1.4
+    nuget Fake.Tools.Git               6.1.4
+    nuget Fake.JavaScript.Npm          6.1.4
+    nuget Microsoft.Build              17.14.28
+    nuget Microsoft.Build.Framework    17.14.28
+    nuget Microsoft.Build.Tasks.Core   17.14.28
+    nuget Microsoft.Build.Utilities.Core   17.14.28
+
+group ProviderSDK
+    frameworks: netstandard2.0
+    source https://api.nuget.org/v3/index.json
+    nuget FSharp.Core >= 6.0.1 lowest_matching: true
+    
+    # These lines are used by Paket to get the latest version of the Type Provider SDK files
+    github fsprojects/FSharp.TypeProviders.SDK src/ProvidedTypes.fsi
+    github fsprojects/FSharp.TypeProviders.SDK src/ProvidedTypes.fs
+    
+group Test
+    frameworks: net10.0
+    source https://api.nuget.org/v3/index.json
+
+    nuget GitHubActionsTestLogger
+    nuget Microsoft.NET.Test.Sdk version 18.4.0
+    nuget Verify.Xunit version 31.12.5
+    nuget xunit version 2.9.3
+    nuget xunit.runner.visualstudio 
+        version 3.1.5
+        version_in_path: true

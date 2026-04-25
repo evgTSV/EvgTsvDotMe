@@ -1,14 +1,14 @@
 module EvgTsvDotMe.PagesProviderTests
 
 open EvgTsvDotMe.PageResolving
-open NUnit.Framework
+open Xunit
 
 type TestPagesProvider = PagesProvider<PagesDir="View/Pages">
 
-[<Test>]
+[<Fact>]
 let ``Home page file in pages directory`` () =
-    Assert.That(TestPagesProvider.Home.Path, Is.EqualTo("/pages/home"))
+    Assert.Equal(TestPagesProvider.Home.Path, "/pages/home")
 
-[<Test>]
+[<Fact>]
 let ``Page file is located in sub directory``() =
-    Assert.That(TestPagesProvider.Blog'.Article.Path, Is.EqualTo("/pages/blog/article"))
+    Assert.Equal(TestPagesProvider.Blog'.Article.Path, "/pages/blog/article")

@@ -27,10 +27,10 @@ let tryGetEnv name =
     | null -> None
     | value -> Some value
 
-let getEnv name  =  
+let getEnv name =
     match tryGetEnv name with
     | Some value -> value
     | None -> failwithf $"Environment variable '%s{name}' not found"
-    
+
 let getEnvOrDefault name defaultValue =
     tryGetEnv name |> Option.defaultValue defaultValue

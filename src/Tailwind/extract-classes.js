@@ -3,7 +3,7 @@ import path from 'path';
 import { globSync } from 'glob';
 
 const classRegex = /class'\s*=\s*"([^"]+)"/g;
-const projectRoot = path.resolve(import.meta.url, '../../EvgTsvDotMe');
+const projectRoot = path.resolve(import.meta.url, '../EvgTsvDotMe');
 
 // Find all F# files
 const fsFiles = globSync('../EvgTsvDotMe/**/*.fs', { 

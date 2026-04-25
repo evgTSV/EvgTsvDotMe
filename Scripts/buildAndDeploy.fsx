@@ -8,9 +8,9 @@ open type Generaptor.GitHubActions.Commands
 
 let fileName = "buildAndDeploy"
 let scriptsDir = "./Scripts"
-
-let scriptPath = $"{scriptsDir}/{fileName}.fsx"
 let testEncodingScriptPath = $"{scriptsDir}/Test-Encoding.ps1"
+
+let serverPlatform = "linux/amd64"
 
 let workflows = [
     let workflow name body = workflow name [
@@ -42,9 +42,15 @@ let workflows = [
         run = "./build.ps1"
     )
     
+    let runTests = step(
+        name = "Run tests",
+        run = "dotnet run --project build/build.fsproj -t RunTests"
+    )
+    
     let env = [
         setEnv "DOTNET_CLI_TELEMETRY_OPTOUT" "1"
         setEnv "DOTNET_NOLOGO" "1"
+        setEnv "CI" "true"
     ]
     
     workflow "main" [
@@ -75,12 +81,12 @@ let workflows = [
             setUpDotNetSdkStep
             
             step(
-                name = "Restore Fantomas",
+                name = "Restore tools",
                 run = "dotnet tool restore"
             )
             step(
                 name = "Verify code format",
-                run = "dotnet fantomas --check ."
+                run = "dotnet run --project build/build.fsproj -t CheckFormat"
             )
         ]
         
@@ -94,13 +100,36 @@ let workflows = [
 
             step(
                 name = "Verify generated CI definition",
-                shell = "pwsh",
-                run = $"dotnet fsi {scriptPath} verify"
+                run = "dotnet run --project build/build.fsproj -t VerifyWorkflow"
             )
         ]
         
-        job "build" [            
+        job "build" [
             runsOn "ubuntu-24.04"
+
+            yield! env
+            
+            checkoutStep
+            setUpDotNetSdkStep
+            
+            runBuild
+        ]
+        
+        job "tests" [
+            runsOn "ubuntu-24.04"
+            needs "build"
+            
+            yield! env
+            
+            checkoutStep
+            setUpDotNetSdkStep
+            
+            runTests
+        ]
+        
+        job "build-image" [            
+            runsOn "ubuntu-24.04"
+            needs "tests"
             
             yield! env
             
@@ -111,7 +140,7 @@ let workflows = [
             
             step(
                 name = "Build Docker image",
-                run = "docker build -f ./EvgTsvDotMe/Dockerfile -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest ./"
+                run = $"docker build --platform {serverPlatform} -f ./EvgTsvDotMe/Dockerfile -t evgtsvdotme:${{ github.sha }} -t evgtsvdotme:latest ./"
             )
             
             step(
@@ -143,7 +172,7 @@ ls -lh /tmp/evgtsvdotme.tar
         
         job "deploy" [
             runsOn "ubuntu-24.04"
-            needs "build"
+            needs "build-image"
             
             yield! env
             
