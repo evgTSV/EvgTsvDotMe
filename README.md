@@ -42,11 +42,11 @@ docker compose up
 ### Generate GitHub workflows
 
 ```bash
-dotnet fsi ./Scripts/buildAndDeploy.fsx
+dotnet run --project build/build.fsproj -t GenWorkflow
 ```
 
 ### Code formatting
 
 ```bash
-dotnet fantomas .
+dotnet run --project build/build.fsproj -t Format
 ```
