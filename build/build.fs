@@ -223,7 +223,7 @@ options:
         printfn "  * ARG: PublishOutput=path to specify output directory for Publish target"
 
         printfn
-            "  * ARG: Arch=architecture to specify target architecture for Publish (e.g. win-x64, linux-x64, osx-x64)"
+            "  * ARG: Arch=architecture to specify target architecture for Publish (e.g. win/amd64, linux/amd64, osx/arm64)"
 
         printfn "  * ENV: CI=true to enable CI-specific settings"
         printfn ""

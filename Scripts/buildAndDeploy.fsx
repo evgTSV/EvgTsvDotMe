@@ -206,7 +206,7 @@ ls -lh /tmp/evgtsvdotme.tar
                     "username", "${{ secrets.SERVER_USER }}"
                     "key", "${{ secrets.SERVER_SSH_KEY }}"
                     "source", "/tmp/evgtsvdotme.tar"
-                    "target", "/tmp/"
+                    "target", "/"
                 ]
             )
             
@@ -220,7 +220,7 @@ ls -lh /tmp/evgtsvdotme.tar
                     "script", """
 set -e
 REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
-DOCKER_IMAGE_PATH="/tmp/tmp/evgtsvdotme.tar"
+DOCKER_IMAGE_PATH="/tmp/evgtsvdotme.tar"
 
 echo "=== Creating application directory ==="
 mkdir -p "$REPO_PATH"
@@ -230,7 +230,7 @@ echo "=== Checking Docker image ==="
 if [ ! -f "$DOCKER_IMAGE_PATH" ]; then
     echo "Error: Docker image file not found at $DOCKER_IMAGE_PATH"
     echo "Available files in /tmp:"
-    ls -la /tmp/tmp/ | head -20
+    ls -la /tmp/ | head -20
     exit 1
 fi
 

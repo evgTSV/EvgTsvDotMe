@@ -118,7 +118,7 @@ jobs:
     - name: Verify Docker image
       run: docker images | grep evgtsvdotme
     - name: Save Docker image
-      run: |2
+      run: |2+
 
         mkdir -p /tmp
         docker save evgtsvdotme:latest -o /tmp/evgtsvdotme.tar
@@ -152,18 +152,18 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         source: /tmp/evgtsvdotme.tar
-        target: /tmp/
+        target: /
         username: ${{ secrets.SERVER_USER }}
     - name: Load and run Docker image
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SERVER_HOST }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        script: |2
+        script: |2+
 
           set -e
           REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
-          DOCKER_IMAGE_PATH="/tmp/tmp/evgtsvdotme.tar"
+          DOCKER_IMAGE_PATH="/tmp/evgtsvdotme.tar"
 
           echo "=== Creating application directory ==="
           mkdir -p "$REPO_PATH"
@@ -173,7 +173,7 @@ jobs:
           if [ ! -f "$DOCKER_IMAGE_PATH" ]; then
               echo "Error: Docker image file not found at $DOCKER_IMAGE_PATH"
               echo "Available files in /tmp:"
-              ls -la /tmp/tmp/ | head -20
+              ls -la /tmp/ | head -20
               exit 1
           fi
 
