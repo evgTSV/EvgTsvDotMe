@@ -146,6 +146,22 @@ jobs:
         curl -L -o cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
         chmod +x cloudflared
         sudo mv cloudflared /usr/local/bin/
+    - name: Setup SSH for Cloudflare Tunnel
+      run: |2
+
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        cat > ~/.ssh/config <<EOF
+        Host ${{ secrets.SSH_HOST }}
+        HostName ${{ secrets.SSH_HOST }}
+        User ${{ secrets.SERVER_USER }}
+        Port 22
+        ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
+        IdentityFile ~/.ssh/id_rsa
+        StrictHostKeyChecking no
+        EOF
+        echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
     - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       name: Download Docker image artifact
       uses: actions/download-artifact@v8
@@ -153,74 +169,62 @@ jobs:
         name: docker-image
         path: /tmp
     - name: Transfer Docker image
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
-        proxy-command: cloudflared access ssh --hostname ${{ secrets.SSH_HOST }}
-        source: /tmp/evgtsvdotme.tar
-        target: /
-        username: ${{ secrets.SERVER_USER }}
+      run: scp /tmp/evgtsvdotme.tar ${{ secrets.SERVER_USER }}@${{ secrets.SSH_HOST }}:/tmp/
     - name: Load and run Docker image
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
-        proxy-command: cloudflared access ssh --hostname ${{ secrets.SSH_HOST }}
-        script: |2
+      run: |2
 
-          set -e
-          REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
-          DOCKER_IMAGE_PATH="/tmp/evgtsvdotme.tar"
+        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+        set -e
+        REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
+        DOCKER_IMAGE_PATH="/tmp/evgtsvdotme.tar"
 
-          echo "=== Creating application directory ==="
-          mkdir -p "$REPO_PATH"
-          echo "✓ Application directory created: $REPO_PATH"
+        echo "=== Creating application directory ==="
+        mkdir -p "$REPO_PATH"
+        echo "✓ Application directory created: $REPO_PATH"
 
-          echo "=== Checking Docker image ==="
-          if [ ! -f "$DOCKER_IMAGE_PATH" ]; then
-              echo "Error: Docker image file not found at $DOCKER_IMAGE_PATH"
-              echo "Available files in /tmp:"
-              ls -la /tmp/ | head -20
-              exit 1
-          fi
+        echo "=== Checking Docker image ==="
+        if [ ! -f "$DOCKER_IMAGE_PATH" ]; then
+            echo "Error: Docker image file not found at $DOCKER_IMAGE_PATH"
+            echo "Available files in /tmp:"
+            ls -la /tmp/ | head -20
+            exit 1
+        fi
 
-          echo "=== Docker image info ==="
-          ls -lh "$DOCKER_IMAGE_PATH"
+        echo "=== Docker image info ==="
+        ls -lh "$DOCKER_IMAGE_PATH"
 
-          echo "=== Loading Docker image ==="
-          docker load -i "$DOCKER_IMAGE_PATH"
+        echo "=== Loading Docker image ==="
+        docker load -i "$DOCKER_IMAGE_PATH"
 
-          echo "=== Verifying loaded image ==="
-          docker images | grep evgtsvdotme || echo "Warning: Image not found in docker images output"
+        echo "=== Verifying loaded image ==="
+        docker images | grep evgtsvdotme || echo "Warning: Image not found in docker images output"
 
-          echo "=== Creating docker compose configuration ==="
-          cd "$REPO_PATH"
-          cat > docker-compose.yml << 'EOF'
-          services:
-            webapp:
-              image: evgtsvdotme
-              build:
-                context: .
-                dockerfile: EvgTsvDotMe/Dockerfile
-              ports:
-                - "8080:8080"
-              read_only: true   
-              security_opt:
-                - "no-new-privileges=true"
-          EOF
+        echo "=== Creating docker compose configuration ==="
+        cd "$REPO_PATH"
+        cat > docker-compose.yml << 'EOF'
+        services:
+          webapp:
+            image: evgtsvdotme
+            build:
+              context: .
+              dockerfile: EvgTsvDotMe/Dockerfile
+            ports:
+              - "8080:8080"
+            read_only: true   
+            security_opt:
+              - "no-new-privileges=true"
+        EOF
 
-          echo "=== Deploying with docker compose ==="
-          docker compose up -d
+        echo "=== Deploying with docker compose ==="
+        docker compose up -d
 
-          echo "=== Waiting for application to be ready ==="
-          sleep 5
+        echo "=== Waiting for application to be ready ==="
+        sleep 5
 
-          echo "=== Checking application status ==="
-          docker compose ps
+        echo "=== Checking application status ==="
+        docker compose ps
 
-          echo "=== Cleaning up ==="
-          rm -f "$DOCKER_IMAGE_PATH"
+        echo "=== Cleaning up ==="
+        rm -f "$DOCKER_IMAGE_PATH"
 
-          echo "=== Deployment completed successfully ==="
-        username: ${{ secrets.SERVER_USER }}
+        echo "=== Deployment completed successfully ==="

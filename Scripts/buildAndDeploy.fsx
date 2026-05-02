@@ -198,6 +198,25 @@ sudo mv cloudflared /usr/local/bin/
             )
             
             step(
+                name = "Setup SSH for Cloudflare Tunnel",
+                run = """
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+cat > ~/.ssh/config <<EOF
+Host ${{ secrets.SSH_HOST }}
+HostName ${{ secrets.SSH_HOST }}
+User ${{ secrets.SERVER_USER }}
+Port 22
+ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
+IdentityFile ~/.ssh/id_rsa
+StrictHostKeyChecking no
+EOF
+echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+chmod 600 ~/.ssh/id_rsa
+"""
+            )
+            
+            step(
                 condition = "github.event_name == 'push' && github.ref == 'refs/heads/main'",
                 name = "Download Docker image artifact",
                 usesSpec = Auto "actions/download-artifact",
@@ -209,26 +228,13 @@ sudo mv cloudflared /usr/local/bin/
             
             step(
                 name = "Transfer Docker image",
-                usesSpec = ActionWithVersion "appleboy/scp-action@master",
-                options = Map.ofList [
-                    "host", "${{ secrets.SERVER_HOST }}"
-                    "username", "${{ secrets.SERVER_USER }}"
-                    "key", "${{ secrets.SERVER_SSH_KEY }}"
-                    "proxy-command", "cloudflared access ssh --hostname ${{ secrets.SSH_HOST }}"
-                    "source", "/tmp/evgtsvdotme.tar"
-                    "target", "/"
-                ]
+                run = "scp /tmp/evgtsvdotme.tar ${{ secrets.SERVER_USER }}@${{ secrets.SSH_HOST }}:/tmp/"
             )
             
             step(
                 name = "Load and run Docker image",
-                usesSpec = ActionWithVersion "appleboy/ssh-action@master",
-                options = Map.ofList [
-                    "host", "${{ secrets.SERVER_HOST }}"
-                    "username", "${{ secrets.SERVER_USER }}"
-                    "key", "${{ secrets.SERVER_SSH_KEY }}"
-                    "proxy-command", "cloudflared access ssh --hostname ${{ secrets.SSH_HOST }}"
-                    "script", """
+                run = """
+ssh ${{ secrets.SERVER_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
 set -e
 REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
 DOCKER_IMAGE_PATH="/tmp/evgtsvdotme.tar"
@@ -284,7 +290,6 @@ rm -f "$DOCKER_IMAGE_PATH"
 
 echo "=== Deployment completed successfully ==="
 """
-                ]
             )
         ]
     ]
