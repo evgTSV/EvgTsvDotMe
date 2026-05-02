@@ -203,8 +203,8 @@ sudo mv cloudflared /usr/local/bin/
 mkdir -p ~/.ssh
 chmod 700 ~/.ssh
 cat > ~/.ssh/config <<EOF
-Host ${{ secrets.SSH_HOST }}
-HostName ${{ secrets.SSH_HOST }}
+Host ${{ secrets.SERVER_HOST }}
+HostName ${{ secrets.SERVER_HOST }}
 User ${{ secrets.SERVER_USER }}
 Port 22
 ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
@@ -228,13 +228,13 @@ chmod 600 ~/.ssh/id_rsa
             
             step(
                 name = "Transfer Docker image",
-                run = "scp /tmp/evgtsvdotme.tar ${{ secrets.SERVER_USER }}@${{ secrets.SSH_HOST }}:/tmp/"
+                run = "scp /tmp/evgtsvdotme.tar ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/"
             )
             
             step(
                 name = "Load and run Docker image",
                 run = """
-ssh ${{ secrets.SERVER_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
 set -e
 REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
 DOCKER_IMAGE_PATH="/tmp/evgtsvdotme.tar"
