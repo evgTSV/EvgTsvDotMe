@@ -53,8 +53,8 @@ module Resolver =
 [<TypeProvider>]
 type PagesProvider(config: TypeProviderConfig) as this =
     inherit TypeProviderForNamespaces (
-        config, assemblyReplacementMap=[ ("EvgTsvDotMe.PagesProvider.DesignTime",
-                                          "EvgTsvDotMe.PagesProvider.Runtime") ], addDefaultProbingLocation=true)
+        config, assemblyReplacementMap=[ ("EvgTsvDotMe.TypeProviders.DesignTime",
+                                          "EvgTsvDotMe.TypeProviders.Runtime") ], addDefaultProbingLocation=true)
     
     let ns = "EvgTsvDotMe.PageResolving"
     let asm = Assembly.GetExecutingAssembly()

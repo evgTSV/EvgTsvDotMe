@@ -4,6 +4,7 @@ module Build
 #nowarn 20
 
 open System
+open Utils.Args
 open Fake.Core
 open Fake.Core.TargetOperators
 open Fake.DotNet
@@ -11,15 +12,6 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.JavaScript
-
-let argValOrNone name (args: DocoptMap) =
-    DocoptResult.tryGetArgument name args
-    |> Option.bind (fun v -> if String.IsNullOrWhiteSpace(v) then None else Some v)
-
-let argValOrDefault name defaultValue (args: DocoptMap) =
-    DocoptResult.tryGetArgument name args |> Option.defaultValue defaultValue
-
-let argValBool name (args: DocoptMap) = DocoptResult.hasFlag name args
 
 let buildscript () =
     Environment.CurrentDirectory <- __SOURCE_DIRECTORY__ </> ".."
@@ -69,7 +61,8 @@ options:
     The project is open source and available on GitHub, inviting collaboration and contributions from other developers interested in F# and web development.
 
     * EvgTsvDotMe -- main web application project
-    * EvgTsvDotMe.PagesProvider -- F# Type Provider for loading page paths depending on the files in the `View/Pages` directory
+    * EvgTsvDotMe.TypeProviders.*
+        * PagesProvider -- F# Type Provider for loading page paths depending on the files in the `View/Pages` directory
     * Tailwind CSS -- used for styling the website with a utility-first approach
     * Htmx -- used for making the website more dynamic and responsive without needing a full"""
 
@@ -284,6 +277,10 @@ options:
             failwith "Workflow generation failed"
         else
             Trace.log "Workflow generation succeeded")
+    
+    Target.create "GenDotEnv" (fun _ ->
+        let a = 1
+        a |> ignore)
 
     Target.create "All" ignore
     Target.create "Frontend" ignore

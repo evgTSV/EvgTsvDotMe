@@ -7,12 +7,12 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EvgTsvDotMe.PagesProvider.Runtime\EvgTsvDotMe.PagesProvider.Runtime.fsproj" />
+    <ProjectReference Include="..\..\src\EvgTsvDotMe.TypeProviders.Runtime\EvgTsvDotMe.TypeProviders.Runtime.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="View\Pages\Home.fs" />
     <Compile Include="View\Pages\Blog\Article.fs" />
-    <Compile Include="EvgTsvDotMe.PagesProvider.Tests.fs" />
+    <Compile Include="PagesProvider.Tests.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Remove="System.Reflection.Metadata" />

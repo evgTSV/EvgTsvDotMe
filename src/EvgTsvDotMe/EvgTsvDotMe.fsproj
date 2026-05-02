@@ -35,7 +35,7 @@
     <Folder Include="wwwroot\js\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EvgTsvDotMe.PagesProvider.Runtime\EvgTsvDotMe.PagesProvider.Runtime.fsproj" />
+    <ProjectReference Include="..\EvgTsvDotMe.TypeProviders.Runtime\EvgTsvDotMe.TypeProviders.Runtime.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

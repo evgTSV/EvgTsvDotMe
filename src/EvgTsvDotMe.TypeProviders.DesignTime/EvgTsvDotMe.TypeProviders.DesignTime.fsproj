@@ -17,9 +17,11 @@
       <Paket>True</Paket>
       <Link>paket-files/ProvidedTypes.fs</Link>
     </Compile>
+    <Compile Include="..\EvgTsvDotMe.TypeProviders.Runtime\EvgTsvDotMe.TypeProviders.Runtime.fs">
+      <Link>EvgTsvDotMe.TypeProviders.Runtime.fs</Link>
+    </Compile>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="..\EvgTsvDotMe.PagesProvider.Runtime\EvgTsvDotMe.PagesProvider.Runtime.fs" />
-    <Compile Include="EvgTsvDotMe.PagesProvider.DesignTime.fs" />
+    <Compile Include="PagesProvider.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>

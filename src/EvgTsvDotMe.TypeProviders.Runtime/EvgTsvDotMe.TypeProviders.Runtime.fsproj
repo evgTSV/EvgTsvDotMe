@@ -9,12 +9,12 @@
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="AssemblyInfo.fs"/>
-        <Compile Include="EvgTsvDotMe.PagesProvider.Runtime.fs"/>
+        <Compile Include="EvgTsvDotMe.TypeProviders.Runtime.fs" />
         <None Include="paket.references"/>
     </ItemGroup>
     <ItemGroup>
         <PackageReference Update="FSharp.Core" Version="6.0.100"/>
-        <ProjectReference Include="..\EvgTsvDotMe.PagesProvider.DesignTime\EvgTsvDotMe.PagesProvider.DesignTime.fsproj">
+        <ProjectReference Include="..\EvgTsvDotMe.TypeProviders.DesignTime\EvgTsvDotMe.TypeProviders.DesignTime.fsproj">
             <IsFSharpDesignTimeProvider>true</IsFSharpDesignTimeProvider>
             <PrivateAssets>all</PrivateAssets>
         </ProjectReference>
