@@ -4,7 +4,7 @@ open System
 
 [<AutoOpen>]
 module Helpers =
-    
+
     let runtimeDir = Environment.CurrentDirectory
 
 // Put the TypeProviderAssemblyAttribute in the runtime DLL, pointing to the design-time DLL

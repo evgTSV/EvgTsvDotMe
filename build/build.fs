@@ -277,7 +277,7 @@ options:
             failwith "Workflow generation failed"
         else
             Trace.log "Workflow generation succeeded")
-    
+
     Target.create "GenDotEnv" (fun _ ->
         let a = 1
         a |> ignore)

@@ -5,18 +5,24 @@ open System.Reflection
 
 [<assembly: AssemblyTitleAttribute("EvgTsvDotMe.TypeProviders.DesignTime")>]
 [<assembly: AssemblyProductAttribute("EvgTsvDotMe.TypeProviders")>]
-[<assembly: AssemblyDescriptionAttribute("This library is for the .NET platform implementing EvgTsvDotMe.TypeProviders."
-  )>]
+[<assembly: AssemblyDescriptionAttribute("This library is for the .NET platform implementing EvgTsvDotMe.TypeProviders.")>]
 [<assembly: AssemblyVersionAttribute("1.0.0")>]
 [<assembly: AssemblyFileVersionAttribute("1.0.0")>]
 do ()
 
 module internal AssemblyVersionInformation =
-    let [<Literal>] AssemblyTitle = "EvgTsvDotMe.TypeProviders.DesignTime"
-    let [<Literal>] AssemblyProduct = "EvgTsvDotMe.TypeProviders"
+    [<Literal>]
+    let AssemblyTitle = "EvgTsvDotMe.TypeProviders.DesignTime"
 
-    let [<Literal>] AssemblyDescription =
+    [<Literal>]
+    let AssemblyProduct = "EvgTsvDotMe.TypeProviders"
+
+    [<Literal>]
+    let AssemblyDescription =
         "This library is for the .NET platform implementing EvgTsvDotMe.TypeProviders."
 
-    let [<Literal>] AssemblyVersion = "1.0.0"
-    let [<Literal>] AssemblyFileVersion = "1.0.0"
+    [<Literal>]
+    let AssemblyVersion = "1.0.0"
+
+    [<Literal>]
+    let AssemblyFileVersion = "1.0.0"
