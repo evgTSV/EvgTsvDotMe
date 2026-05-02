@@ -140,6 +140,12 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
     steps:
+    - name: Install Cloudflared CLI
+      run: |2
+
+        curl -L -o cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+        chmod +x cloudflared
+        sudo mv cloudflared /usr/local/bin/
     - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       name: Download Docker image artifact
       uses: actions/download-artifact@v8
@@ -151,6 +157,7 @@ jobs:
       with:
         host: ${{ secrets.SERVER_HOST }}
         key: ${{ secrets.SERVER_SSH_KEY }}
+        proxy-command: cloudflared access ssh --hostname ${{ secrets.SSH_HOST }}
         source: /tmp/evgtsvdotme.tar
         target: /
         username: ${{ secrets.SERVER_USER }}
@@ -159,6 +166,7 @@ jobs:
       with:
         host: ${{ secrets.SERVER_HOST }}
         key: ${{ secrets.SERVER_SSH_KEY }}
+        proxy-command: cloudflared access ssh --hostname ${{ secrets.SSH_HOST }}
         script: |2
 
           set -e

@@ -189,6 +189,15 @@ ls -lh /tmp/evgtsvdotme.tar
             yield! env
             
             step(
+                name = "Install Cloudflared CLI",
+                run = """
+curl -L -o cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+chmod +x cloudflared
+sudo mv cloudflared /usr/local/bin/
+"""
+            )
+            
+            step(
                 condition = "github.event_name == 'push' && github.ref == 'refs/heads/main'",
                 name = "Download Docker image artifact",
                 usesSpec = Auto "actions/download-artifact",
@@ -205,6 +214,7 @@ ls -lh /tmp/evgtsvdotme.tar
                     "host", "${{ secrets.SERVER_HOST }}"
                     "username", "${{ secrets.SERVER_USER }}"
                     "key", "${{ secrets.SERVER_SSH_KEY }}"
+                    "proxy-command", "cloudflared access ssh --hostname ${{ secrets.SSH_HOST }}"
                     "source", "/tmp/evgtsvdotme.tar"
                     "target", "/"
                 ]
@@ -217,6 +227,7 @@ ls -lh /tmp/evgtsvdotme.tar
                     "host", "${{ secrets.SERVER_HOST }}"
                     "username", "${{ secrets.SERVER_USER }}"
                     "key", "${{ secrets.SERVER_SSH_KEY }}"
+                    "proxy-command", "cloudflared access ssh --hostname ${{ secrets.SSH_HOST }}"
                     "script", """
 set -e
 REPO_PATH="/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme"
