@@ -269,6 +269,7 @@ docker images | grep evgtsvdotme || echo "Warning: Image not found in docker ima
 
 echo "=== Deploying with docker compose ==="
 cd "$REPO_PATH"
+touch .env
 docker compose up -d
 
 echo "=== Waiting for application to be ready ==="
