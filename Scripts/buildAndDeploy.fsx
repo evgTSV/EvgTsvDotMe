@@ -188,6 +188,8 @@ ls -lh /tmp/evgtsvdotme.tar
             
             yield! env
             
+            checkoutStep
+            
             step(
                 name = "Install Cloudflared CLI",
                 run = """
@@ -232,6 +234,11 @@ chmod 600 ~/.ssh/id_rsa
             )
             
             step(
+                name = "Transfer Docker compose file",
+                run = "scp compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/${{ secrets.SERVER_USER }}/apps/evgtsvdotme/"
+            )
+            
+            step(
                 name = "Load and run Docker image",
                 run = """
 ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
@@ -260,23 +267,8 @@ docker load -i "$DOCKER_IMAGE_PATH"
 echo "=== Verifying loaded image ==="
 docker images | grep evgtsvdotme || echo "Warning: Image not found in docker images output"
 
-echo "=== Creating docker compose configuration ==="
-cd "$REPO_PATH"
-cat > docker-compose.yml << 'EOF'
-services:
-  webapp:
-    image: evgtsvdotme
-    build:
-      context: .
-      dockerfile: EvgTsvDotMe/Dockerfile
-    ports:
-      - "8080:8080"
-    read_only: true   
-    security_opt:
-      - "no-new-privileges=true"
-EOF
-
 echo "=== Deploying with docker compose ==="
+cd "$REPO_PATH"
 docker compose up -d
 
 echo "=== Waiting for application to be ready ==="
@@ -289,6 +281,7 @@ echo "=== Cleaning up ==="
 rm -f "$DOCKER_IMAGE_PATH"
 
 echo "=== Deployment completed successfully ==="
+EOF
 """
             )
         ]
